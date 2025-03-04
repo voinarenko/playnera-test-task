@@ -1,4 +1,5 @@
 using Code.Gameplay.Input.Service;
+using Code.Infrastructure.Async.Service;
 using Code.Infrastructure.Loading;
 using Code.Infrastructure.States.Factory;
 using Code.Infrastructure.States.GameStates;
@@ -25,8 +26,11 @@ namespace Code.Infrastructure.Installers
     private void BindInfrastructureServices() =>
       Container.BindInterfacesTo<BootstrapInstaller>().FromInstance(this).AsSingle();
 
-    private void BindCommonServices() =>
+    private void BindCommonServices()
+    {
+      Container.Bind<IAsyncService>().To<AsyncService>().AsSingle();
       Container.Bind<ISceneLoader>().To<SceneLoader>().AsSingle();
+    }
 
     private void BindStateMachine() =>
       Container.BindInterfacesAndSelfTo<GameStateMachine>().AsSingle();

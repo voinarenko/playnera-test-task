@@ -1,4 +1,5 @@
-﻿using Cysharp.Threading.Tasks;
+﻿using Code.Infrastructure.Async.Service;
+using Cysharp.Threading.Tasks;
 using System;
 using UnityEngine.SceneManagement;
 
@@ -6,6 +7,11 @@ namespace Code.Infrastructure.Loading
 {
   public class SceneLoader : ISceneLoader
   {
+    private readonly IAsyncService _asyncService;
+    
+    public SceneLoader(IAsyncService asyncService) =>
+      _asyncService = asyncService;
+
     public void LoadScene(string name, Action onLoaded = null) =>
       Load(name, onLoaded).Forget();
 
@@ -13,7 +19,7 @@ namespace Code.Infrastructure.Loading
     {
       var waitNextScene = SceneManager.LoadSceneAsync(nextScene);
       while (!waitNextScene!.isDone)
-        await UniTask.NextFrame();
+        await _asyncService.NextFrame();
       
       onLoaded?.Invoke();
     }
