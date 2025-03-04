@@ -11,6 +11,7 @@ namespace Code.Gameplay.Element
     public Vector3 Offset { get; set; }
 
     private Camera _camera;
+    private SpriteRenderer _renderer;
 
     private IInputService _inputService;
 
@@ -18,13 +19,19 @@ namespace Code.Gameplay.Element
     public void Construct(IInputService inputService) =>
       _inputService = inputService;
 
-    private void Start() =>
+    private void Start()
+    {
+      TryGetComponent(out _renderer);
       _camera = Camera.main;
+    }
 
     private void Update()
     {
       if (IsDragging)
+      {
         SetPositionToPointer(_camera.ScreenToWorldPoint(_inputService.GetActions().Player.Drag.ReadValue<Vector2>()));
+        _renderer.sortingOrder = -(int)(transform.position.y * 100);
+      }
     }
 
     public void SetPositionToPointer(Vector3 pointerPosition)
