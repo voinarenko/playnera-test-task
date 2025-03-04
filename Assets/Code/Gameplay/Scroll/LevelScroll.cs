@@ -1,32 +1,26 @@
-﻿using Code.Gameplay.Input.Service;
+﻿using Code.Gameplay.Input;
+using Code.Gameplay.Input.Service;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using Zenject;
 
 namespace Code.Gameplay.Scroll
 {
-  public class LevelScroll : MonoBehaviour
+  public class LevelScroll : MonoBehaviour, IDraggable
   {
+    public bool IsDragging { get; set; }
+    public Vector2 DragOrigin { get; set; }
+
+    private IInputService _inputService;
+    
     [SerializeField] private float _dragSpeed;
     [SerializeField] private Collider2D _confinerCollider;
     private Collider2D _objectCollider;
     private Camera _camera;
     private CorrectTransforms _corrector;
-    private Vector2 _dragOrigin;
-    private bool _isDragging;
-
-    private IInputService _inputService;
 
     [Inject]
     public void Construct(IInputService inputService) =>
       _inputService = inputService;
-
-    private void OnEnable()
-    {
-      _inputService.GetActions().Enable();
-      _inputService.GetActions().Player.Touch.started += OnTouchStarted;
-      _inputService.GetActions().Player.Touch.canceled += OnTouchCanceled;
-    }
 
     private void Start()
     {
@@ -38,29 +32,13 @@ namespace Code.Gameplay.Scroll
 
     private void Update()
     {
-      if (!_isDragging)
+      if (!IsDragging)
         return;
 
       Vector2 currentPosition = _camera.ScreenToWorldPoint(_inputService.GetActions().Player.Drag.ReadValue<Vector2>());
-      var difference = currentPosition - _dragOrigin;
+      var difference = currentPosition - DragOrigin;
       transform.position += new Vector3(-difference.x, 0, 0) * (_dragSpeed * Time.deltaTime);
       _corrector.ClampPosition(_confinerCollider, _objectCollider);
     }
-
-    private void OnDisable()
-    {
-      _inputService.GetActions().Disable();
-      _inputService.GetActions().Player.Touch.started -= OnTouchStarted;
-      _inputService.GetActions().Player.Touch.canceled -= OnTouchCanceled;
-    }
-
-    private void OnTouchStarted(InputAction.CallbackContext context)
-    {
-      _isDragging = true;
-      _dragOrigin = _camera.ScreenToWorldPoint(_inputService.GetActions().Player.Drag.ReadValue<Vector2>());
-    }
-
-    private void OnTouchCanceled(InputAction.CallbackContext context) =>
-      _isDragging = false;
   }
 }
