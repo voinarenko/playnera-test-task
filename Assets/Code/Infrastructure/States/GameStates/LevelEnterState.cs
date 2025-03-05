@@ -13,5 +13,10 @@ namespace Code.Infrastructure.States.GameStates
 
     public void Enter() =>
       _stateMachine.Enter<LevelLoopState>();
+
+    public void Exit()
+    {
+      
+    }
   }
 }

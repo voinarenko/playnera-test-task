@@ -18,6 +18,11 @@ namespace Code.Infrastructure.States.GameStates
     public void Enter() =>
       _sceneLoader.LoadScene(Scenes.Level, OnLoaded);
 
+    public void Exit()
+    {
+      
+    }
+
     private void OnLoaded() =>
       _stateMachine.Enter<LevelEnterState>();
   }

@@ -8,7 +8,7 @@ using Zenject;
 
 namespace Code.Gameplay.Input
 {
-  public class ProcessInput : MonoBehaviour
+  public class Process : MonoBehaviour
   {
     private const string BackgroundTag = "Background";
     private const string ElementTag = "Element";
@@ -26,9 +26,9 @@ namespace Code.Gameplay.Input
 
     private void OnEnable()
     {
-      _inputService.GetActions().Enable();
       _inputService.GetActions().Player.Touch.started += OnTouchStarted;
       _inputService.GetActions().Player.Touch.canceled += OnTouchCanceled;
+      _inputService.GetActions().UI.Escape.performed += Quit;
     }
 
     private void Start()
@@ -40,9 +40,9 @@ namespace Code.Gameplay.Input
 
     private void OnDisable()
     {
-      _inputService.GetActions().Disable();
       _inputService.GetActions().Player.Touch.started -= OnTouchStarted;
       _inputService.GetActions().Player.Touch.canceled -= OnTouchCanceled;
+      _inputService.GetActions().UI.Escape.performed -= Quit;
     }
 
     private void OnTouchStarted(InputAction.CallbackContext context)
@@ -73,6 +73,19 @@ namespace Code.Gameplay.Input
     {
       _draggable.IsDragging = false;
       _animated?.Restore();
+    }
+
+    private void Quit(InputAction.CallbackContext context)
+    {
+#if UNITY_EDITOR
+      UnityEditor.EditorApplication.isPlaying = false;
+#elif UNITY_STANDALONE
+      Application.Quit();
+#elif UNITY_ANDROID
+      var activity =
+        new AndroidJavaClass("com.unity3d.player.UnityPlayer").GetStatic<AndroidJavaObject>("currentActivity");
+      activity.Call<bool>("moveTaskToBack", true);
+#endif
     }
   }
 }
