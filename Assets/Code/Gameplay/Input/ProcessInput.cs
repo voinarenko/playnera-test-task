@@ -1,6 +1,6 @@
 ﻿using Code.Gameplay.Element;
 using Code.Gameplay.Input.Service;
-using Code.Gameplay.Scroll;
+using Code.Gameplay.Visual;
 using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -18,6 +18,7 @@ namespace Code.Gameplay.Input
     private Camera _camera;
     private CinemachineCamera _cinemachineCamera;
     private IDraggable _draggable;
+    private IAnimated _animated;
 
     [Inject]
     public void Construct(IInputService inputService) =>
@@ -49,9 +50,11 @@ namespace Code.Gameplay.Input
       var touchPosition = _camera.ScreenToWorldPoint(_inputService.GetActions().Player.Drag.ReadValue<Vector2>());
       var hit = Physics2D.Raycast(touchPosition, Vector2.zero);
       hit.transform.TryGetComponent(out _draggable);
+      hit.transform.TryGetComponent(out _animated);
+      _animated?.Enlarge();
       if (hit && hit.transform.CompareTag(BackgroundTag))
       {
-        hit.transform.TryGetComponent<LevelScroll>(out var scroll);
+        hit.transform.TryGetComponent<Scroll.Scroll>(out var scroll);
         _cinemachineCamera.Follow = hit.transform;
         scroll.IsDragging = true;
         scroll.DragOrigin = touchPosition;
@@ -66,7 +69,10 @@ namespace Code.Gameplay.Input
       }
     }
 
-    private void OnTouchCanceled(InputAction.CallbackContext context) =>
+    private void OnTouchCanceled(InputAction.CallbackContext context)
+    {
       _draggable.IsDragging = false;
+      _animated?.Restore();
+    }
   }
 }

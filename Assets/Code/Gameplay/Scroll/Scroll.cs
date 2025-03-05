@@ -5,17 +5,22 @@ using Zenject;
 
 namespace Code.Gameplay.Scroll
 {
-  public class LevelScroll : MonoBehaviour, IDraggable
+  public class Scroll : MonoBehaviour, IDraggable
   {
     public bool IsDragging { get; set; }
+
     public Vector2 DragOrigin { get; set; }
 
     private IInputService _inputService;
-    
+
     [SerializeField] private float _dragSpeed;
+
     [SerializeField] private Collider2D _confinerCollider;
+
     private Collider2D _objectCollider;
+
     private Camera _camera;
+
     private CorrectTransforms _corrector;
 
     [Inject]
