@@ -12,9 +12,9 @@ namespace Code.Infrastructure.States.GameStates
       _inputService = inputService;
 
     public void Enter() =>
-      _inputService.GetActions().Enable();
+      _inputService.Enable();
 
     public void Exit() =>
-      _inputService.GetActions().Disable();
+      _inputService.Disable();
   }
 }
