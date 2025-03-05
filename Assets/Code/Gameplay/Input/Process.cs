@@ -17,6 +17,7 @@ namespace Code.Gameplay.Input
 
     private Camera _camera;
     private CinemachineCamera _cinemachineCamera;
+    private CinemachinePositionComposer _composer;
     private IDraggable _draggable;
     private IAnimated _animated;
 
@@ -35,6 +36,7 @@ namespace Code.Gameplay.Input
     {
       _camera = Camera.main;
       FindAnyObjectByType<CinemachineCamera>().TryGetComponent(out _cinemachineCamera);
+      _cinemachineCamera.TryGetComponent(out _composer);
     }
 
 
@@ -56,6 +58,7 @@ namespace Code.Gameplay.Input
       {
         hit.transform.TryGetComponent<Scroll.Scroll>(out var scroll);
         _cinemachineCamera.Follow = hit.transform;
+        _composer.Composition.DeadZone.Enabled = false;
         scroll.IsDragging = true;
         scroll.DragOrigin = touchPosition;
       }
@@ -63,6 +66,7 @@ namespace Code.Gameplay.Input
       {
         hit.transform.TryGetComponent<Drag>(out var drag);
         _cinemachineCamera.Follow = hit.transform;
+        _composer.Composition.DeadZone.Enabled = true;
         drag.IsDragging = true;
         drag.Offset = drag.transform.position - touchPosition;
         drag.SetPositionToPointer(touchPosition);
