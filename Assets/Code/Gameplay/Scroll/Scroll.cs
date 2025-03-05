@@ -21,7 +21,7 @@ namespace Code.Gameplay.Scroll
 
     private Camera _camera;
 
-    private CorrectTransforms _corrector;
+    private Correct _corrector;
 
     [Inject]
     public void Construct(IInputService inputService) =>

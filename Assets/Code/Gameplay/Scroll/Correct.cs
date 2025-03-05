@@ -2,7 +2,7 @@
 
 namespace Code.Gameplay.Scroll
 {
-  public class CorrectTransforms : MonoBehaviour
+  public class Correct : MonoBehaviour
   {
     public void ResizeToCamera(Camera mainCamera)
     {
